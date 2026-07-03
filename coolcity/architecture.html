@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture & Data — CoolCity AI</title>
+<meta name="description" content="System architecture, datasets, and processing stack for the CoolCity AI urban heat mitigation framework.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span>CoolCity AI</span></a>
+    <div class="nav-links">
+      <a href="index.html">Overview</a>
+      <a href="approach.html">Approach</a>
+      <a href="architecture.html" class="active">Architecture</a>
+      <a href="scenarios.html">Scenarios</a>
+      <a href="outcomes.html">Outcomes</a>
+    </div>
+    <a class="home-link" href="../index.html">↩ Anshu site</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">System design</div>
+  <h1><span class="grad-cool">Architecture</span> & datasets</h1>
+  <p>How raw satellite and meteorological data flow through the system into an optimized cooling plan — and exactly which inputs power each stage.</p>
+</header>
+
+<main class="wrap">
+
+  <a class="backlink" href="index.html">← Back to overview</a>
+
+  <section>
+    <h2>End-to-end pipeline</h2>
+    <div class="flow">
+      <div class="node stage-in"><div class="t">Ingest</div><div class="s">GEE / API pulls of LST, LULC, ERA5, OSM</div></div>
+      <div class="arrow">→</div>
+      <div class="node stage-in"><div class="t">Preprocess</div><div class="s">cloud mask, resample, align to common grid</div></div>
+      <div class="arrow">→</div>
+      <div class="node stage-ml"><div class="t">Feature stack</div><div class="s">per-pixel drivers</div></div>
+      <div class="arrow">→</div>
+      <div class="node stage-ml"><div class="t">PINN model</div><div class="s">LST prediction + physics loss</div></div>
+      <div class="arrow">→</div>
+      <div class="node stage-ml"><div class="t">Scenario engine</div><div class="s">counterfactual sims + optimizer</div></div>
+      <div class="arrow">→</div>
+      <div class="node stage-out"><div class="t">Dashboard</div><div class="s">maps + ranked plan</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Input datasets</h2>
+    <p class="lead">All from the brief's recommended sources — free, open, and globally available.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Category</th><th>Dataset</th><th>Provides</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="3">Remote sensing</td><td>Landsat 8 (TIRS)</td><td>Land Surface Temperature @30 m</td><td>Hotspot mapping, model target</td></tr>
+          <tr><td>ECOSTRESS</td><td>High-res LST, diurnal</td><td>Sharpening & validation</td></tr>
+          <tr><td>Sentinel-2 / Landsat</td><td>Land use / land cover, NDVI</td><td>Vegetation & surface drivers</td></tr>
+          <tr><td rowspan="2">Meteorology</td><td>ERA5 reanalysis</td><td>Air temp, humidity, wind</td><td>Heat-stress index, atmosphere</td></tr>
+          <tr><td>CPCB stations</td><td>Ground air quality / weather</td><td>Local calibration</td></tr>
+          <tr><td rowspan="3">Urban form</td><td>OpenStreetMap</td><td>Buildings, roads, land use</td><td>Morphology features</td></tr>
+          <tr><td>GHSL</td><td>Built-up density &amp; population</td><td>Vulnerability weighting</td></tr>
+          <tr><td>UT-GLOBUS</td><td>Building heights (if available)</td><td>3D urban morphology</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Derived feature stack</h2>
+    <p class="lead">Every input is resampled to a common 30 m grid, then reduced to per-pixel drivers the model reasons over.</p>
+    <div class="grid">
+      <div class="panel"><h3>🌿 Surface & vegetation</h3><ul class="clean"><li>NDVI / green fraction</li><li>Impervious surface fraction</li><li>Albedo</li><li>LULC class</li></ul></div>
+      <div class="panel"><h3>🏙️ Urban morphology</h3><ul class="clean"><li>Building density &amp; height</li><li>Sky-view factor</li><li>Street-canyon geometry</li><li>Distance to water</li></ul></div>
+      <div class="panel"><h3>🌤️ Atmosphere</h3><ul class="clean"><li>Air temperature</li><li>Relative humidity</li><li>Wind speed</li><li>Time of day / season</li></ul></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tech stack</h2>
+    <div class="pills">
+      <span class="pill cool">Google Earth Engine</span>
+      <span class="pill">Python · rasterio · xarray</span>
+      <span class="pill">GeoPandas</span>
+      <span class="pill hot">PyTorch (PINN)</span>
+      <span class="pill">XGBoost / LightGBM</span>
+      <span class="pill">SHAP</span>
+      <span class="pill">SciPy optimize</span>
+      <span class="pill cool">SOLWEIG / InVEST</span>
+      <span class="pill">Leaflet / deck.gl dashboard</span>
+    </div>
+    <div class="callout">
+      <b>Optional physical models</b> — <b>SOLWEIG</b> (mean radiant temperature at street level) and <b>InVEST Urban Cooling</b> — serve as independent physical baselines to cross-validate the ML model's cooling estimates, strengthening trust in the results.
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <b>CoolCity AI</b> · Optimizing urban heat mitigation via geospatial AI/ML<br>
+  Hackathon submission · <a href="https://github.com/Chirayu18/anshu">Source on GitHub</a>
+</footer>
+
+</body>
+</html>

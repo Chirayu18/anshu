@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outcomes & Impact — CoolCity AI</title>
+<meta name="description" content="Deliverables, validation strategy, and real-world impact of the CoolCity AI urban heat mitigation framework.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span>CoolCity AI</span></a>
+    <div class="nav-links">
+      <a href="index.html">Overview</a>
+      <a href="approach.html">Approach</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="scenarios.html">Scenarios</a>
+      <a href="outcomes.html" class="active">Outcomes</a>
+    </div>
+    <a class="home-link" href="../index.html">↩ Anshu site</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">Deliverables & impact</div>
+  <h1>What a city <span class="grad-cool">actually gets</span></h1>
+  <p>Every outcome in the brief, delivered — and validated so planners can trust it enough to spend real money on it.</p>
+</header>
+
+<main class="wrap">
+
+  <a class="backlink" href="index.html">← Back to overview</a>
+
+  <section>
+    <h2>Deliverables</h2>
+    <div class="grid">
+      <div class="panel"><h3>🗺️ Heat-stress maps</h3><p style="color:var(--text-dim)">City-wide hotspot maps at 30 m, blending surface temperature with air temp &amp; humidity into human-relevant heat stress.</p></div>
+      <div class="panel"><h3>🔍 Driver assessment</h3><p style="color:var(--text-dim)">Quantified, per-neighborhood attribution of what causes the heat — vegetation loss, impervious cover, morphology, atmosphere.</p></div>
+      <div class="panel"><h3>🧠 Validated AI/ML model</h3><p style="color:var(--text-dim)">A physics-informed model of urban heat dynamics, tested on held-out space and time, with reported accuracy and physics-consistency.</p></div>
+      <div class="panel"><h3>🌳 Scenario evaluation</h3><p style="color:var(--text-dim)">Simulated effectiveness of greening, cool roofs, albedo, and water bodies — each with an estimated °C reduction.</p></div>
+      <div class="panel"><h3>🎯 Optimal strategy</h3><p style="color:var(--text-dim)">A ranked plan: intervention type + spatial placement + estimated °C drop + population benefited, under a budget.</p></div>
+      <div class="panel"><h3>💻 Interactive dashboard</h3><p style="color:var(--text-dim)">A map UI to explore hotspots, drivers, and toggle scenarios — the demo judges can click through.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How we prove it's real (validation)</h2>
+    <p class="lead">A cooling recommendation is only worth acting on if the model generalizes. Our validation is deliberately adversarial to our own model.</p>
+    <div class="panel">
+      <ul class="clean">
+        <li><b>Spatial hold-out:</b> train on some districts, predict entirely unseen ones — tests transfer across the city.</li>
+        <li><b>Temporal hold-out:</b> train on one satellite pass, predict another date/season — tests robustness over time.</li>
+        <li><b>Physics consistency:</b> report how well predictions satisfy the surface energy balance, not just fit error.</li>
+        <li><b>Cross-check vs. physical models:</b> compare cooling estimates against SOLWEIG / InVEST independent baselines.</li>
+        <li><b>Ground truth:</b> calibrate and sanity-check against CPCB station observations where available.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why it matters</h2>
+    <div class="stats">
+      <div class="stat"><div class="n hot">Health</div><div class="l">Targets heat illness where it's worst</div></div>
+      <div class="stat"><div class="n cool">Equity</div><div class="l">Weights cooling toward vulnerable areas</div></div>
+      <div class="stat"><div class="n green">Budget</div><div class="l">Max °C relief per rupee spent</div></div>
+      <div class="stat"><div class="n cool">Scalable</div><div class="l">Free global data → any city</div></div>
+    </div>
+    <div class="callout" style="margin-top:1.6rem">
+      CoolCity AI turns a vague mandate — <em>"make the city cooler"</em> — into a specific, defensible, budgeted action plan. That's what moves it from a research demo to a tool a municipal corporation can adopt.
+    </div>
+  </section>
+
+  <section>
+    <h2>Roadmap beyond the hackathon</h2>
+    <div class="steps">
+      <div class="step"><div class="num"></div><div><h4>Multi-city transfer</h4><p>Fine-tune the model on new cities with minimal local data.</p></div></div>
+      <div class="step"><div class="num"></div><div><h4>Future-climate scenarios</h4><p>Couple with climate projections to plan for hotter decades ahead.</p></div></div>
+      <div class="step"><div class="num"></div><div><h4>Cost & co-benefit modeling</h4><p>Add capital cost, water use, and carbon/air-quality co-benefits to the optimizer.</p></div></div>
+      <div class="step"><div class="num"></div><div><h4>Planner integration</h4><p>Export to GIS formats city planning departments already use.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="cta" style="justify-content:flex-start">
+      <a class="btn primary" href="index.html">Back to overview</a>
+      <a class="btn ghost" href="approach.html">Revisit the approach</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <b>CoolCity AI</b> · Optimizing urban heat mitigation via geospatial AI/ML<br>
+  Hackathon submission · <a href="https://github.com/Chirayu18/anshu">Source on GitHub</a>
+</footer>
+
+</body>
+</html>

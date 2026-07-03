@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoolCity AI — Urban Heat Mitigation with AI/ML</title>
+<meta name="description" content="A geospatial, physics-informed AI/ML system to map urban heat hotspots, quantify heat drivers, and optimize cooling interventions.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span>CoolCity AI</span></a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Overview</a>
+      <a href="approach.html">Approach</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="scenarios.html">Scenarios</a>
+      <a href="outcomes.html">Outcomes</a>
+    </div>
+    <a class="home-link" href="../index.html">↩ Anshu site</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">Hackathon Submission · Geospatial AI/ML</div>
+  <h1>Cooling the city with<br><span class="grad-hot">physics-informed</span> <span class="grad-cool">AI</span></h1>
+  <p>A geospatial AI/ML framework that finds urban heat hotspots, quantifies <em>why</em> they get hot, and recommends the <em>optimal, placeable</em> cooling interventions — with an estimated temperature drop in °C.</p>
+  <div class="cta">
+    <a class="btn primary" href="approach.html">See the approach</a>
+    <a class="btn ghost" href="scenarios.html">Explore scenarios</a>
+  </div>
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat"><div class="n hot">+7 °C</div><div class="l">Typical urban heat-island intensity</div></div>
+      <div class="stat"><div class="n cool">4</div><div class="l">Intervention types optimized</div></div>
+      <div class="stat"><div class="n green">30 m</div><div class="l">Hotspot map resolution</div></div>
+      <div class="stat"><div class="n cool">°C</div><div class="l">Quantified cooling per action</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section>
+    <h2>The problem</h2>
+    <p class="lead">Cities are heat traps. Dark roofs, dense concrete, and missing vegetation push urban temperatures several degrees above surrounding areas — the <b>Urban Heat Island</b> effect. This drives heat illness, energy demand, and mortality, and it hits the most vulnerable neighborhoods hardest. City planners know cooling helps, but they lack a data-driven way to answer: <em>where is it worst, why, and what single action buys the most relief per rupee?</em></p>
+  </section>
+
+  <section>
+    <h2>What CoolCity AI does</h2>
+    <p class="lead">Four capabilities, one pipeline — from raw satellite pixels to a ranked list of interventions.</p>
+    <div class="grid">
+      <a class="card" href="approach.html#hotspots">
+        <div class="ico">🗺️</div>
+        <h3>1 · Find hotspots</h3>
+        <p>Fuse Landsat 8 & ECOSTRESS land-surface temperature with weather to produce a heat-stress map and flag hotspots.</p>
+        <span class="tag">Approach →</span>
+      </a>
+      <a class="card" href="approach.html#drivers">
+        <div class="ico">🔍</div>
+        <h3>2 · Explain the heat</h3>
+        <p>Quantify how land cover, urban form, vegetation and atmosphere drive temperature — with explainable ML.</p>
+        <span class="tag">Approach →</span>
+      </a>
+      <a class="card" href="approach.html#model">
+        <div class="ico">🧠</div>
+        <h3>3 · Model dynamics</h3>
+        <p>A physics-informed ML model links LST to its drivers while respecting the surface energy balance.</p>
+        <span class="tag">Approach →</span>
+      </a>
+      <a class="card" href="scenarios.html">
+        <div class="ico">🌳</div>
+        <h3>4 · Optimize cooling</h3>
+        <p>Simulate greening, cool roofs, albedo and water-body changes; rank the best placements by °C saved.</p>
+        <span class="tag">Scenarios →</span>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why we win: physics + AI, not AI alone</h2>
+    <div class="callout">
+      A pure black-box model can memorize that "this pixel is hot" but can't be trusted to predict what happens <em>after</em> you plant trees — that's extrapolation. <b>CoolCity AI constrains the model with the surface energy balance</b> (net radiation = sensible + latent + ground heat flux), so its cooling predictions stay physically plausible. That's the difference between a pretty map and a plan a city can act on.
+    </div>
+    <div class="heatbar"></div>
+    <div class="heatbar-labels"><span>Cool ·  vegetation, water</span><span>Hot · bare concrete, dark roofs</span></div>
+  </section>
+
+  <section>
+    <h2>The pipeline at a glance</h2>
+    <div class="flow">
+      <div class="node stage-in"><div class="t">Satellite + Met data</div><div class="s">LST, LULC, ERA5, morphology</div></div>
+      <div class="arrow">→</div>
+      <div class="node stage-ml"><div class="t">Physics-informed ML</div><div class="s">LST ↔ drivers</div></div>
+      <div class="arrow">→</div>
+      <div class="node stage-ml"><div class="t">Scenario engine</div><div class="s">simulate interventions</div></div>
+      <div class="arrow">→</div>
+      <div class="node stage-out"><div class="t">Optimized plan</div><div class="s">type · place · °C saved</div></div>
+    </div>
+    <p style="margin-top:1rem"><a href="architecture.html">See the full architecture & datasets →</a></p>
+  </section>
+
+  <section>
+    <div class="grid">
+      <a class="card" href="architecture.html"><div class="ico">🏗️</div><h3>Architecture & Data</h3><p>The datasets, processing stack, and model design.</p><span class="tag">Read →</span></a>
+      <a class="card" href="scenarios.html"><div class="ico">🌳</div><h3>Cooling Scenarios</h3><p>The four interventions and how we optimize them.</p><span class="tag">Read →</span></a>
+      <a class="card" href="outcomes.html"><div class="ico">📊</div><h3>Outcomes & Impact</h3><p>Deliverables, validation, and what a city gets.</p><span class="tag">Read →</span></a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <b>CoolCity AI</b> · Optimizing urban heat mitigation via geospatial AI/ML<br>
+  Hackathon submission · <a href="https://github.com/Chirayu18/anshu">Source on GitHub</a>
+</footer>
+
+</body>
+</html>

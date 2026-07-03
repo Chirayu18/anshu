@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Approach — CoolCity AI</title>
+<meta name="description" content="The methodology: hotspot detection, driver attribution, physics-informed ML modeling, and scenario optimization for urban heat mitigation.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span>CoolCity AI</span></a>
+    <div class="nav-links">
+      <a href="index.html">Overview</a>
+      <a href="approach.html" class="active">Approach</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="scenarios.html">Scenarios</a>
+      <a href="outcomes.html">Outcomes</a>
+    </div>
+    <a class="home-link" href="../index.html">↩ Anshu site</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">Methodology</div>
+  <h1>How the <span class="grad-cool">framework</span> works</h1>
+  <p>Four stages, each mapping to one objective in the brief — from raw pixels to an actionable, physics-grounded cooling plan.</p>
+</header>
+
+<main class="wrap">
+
+  <a class="backlink" href="index.html">← Back to overview</a>
+
+  <section id="hotspots">
+    <span class="badge">Objective 1</span>
+    <h2>🗺️ Identify urban heat hotspots</h2>
+    <p class="lead">Turn satellite thermal imagery into a clean, city-wide heat-stress map and automatically flag the hotspots.</p>
+    <div class="panel">
+      <ul class="clean">
+        <li><b>Retrieve LST:</b> compute Land Surface Temperature from <b>Landsat 8</b> thermal bands (split-window / mono-window) and cross-check with high-resolution <b>ECOSTRESS</b>.</li>
+        <li><b>Correct & fuse:</b> emissivity correction using NDVI, cloud masking, and spatio-temporal fusion to fill gaps and sharpen resolution.</li>
+        <li><b>Compute heat-stress index:</b> combine LST with air temperature and humidity (from ERA5/CPCB) into a human-relevant heat-stress layer, not just surface temperature.</li>
+        <li><b>Flag hotspots:</b> statistical thresholding + spatial clustering (e.g. Getis-Ord Gi*) to delineate significant hot zones.</li>
+      </ul>
+      <div class="pills">
+        <span class="pill cool">Landsat 8 LST</span><span class="pill cool">ECOSTRESS</span><span class="pill">NDVI emissivity</span><span class="pill">Hotspot clustering</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="drivers">
+    <span class="badge">Objective 2</span>
+    <h2>🔍 Analyze the drivers of heating</h2>
+    <p class="lead">Not all hot pixels are hot for the same reason. We quantify <em>why</em> each area heats up so interventions target the real cause.</p>
+    <div class="panel">
+      <ul class="clean">
+        <li><b>Assemble a feature stack</b> per pixel: land use/land cover, vegetation (NDVI), built-up density &amp; height (urban morphology), impervious fraction, albedo, distance to water, and atmospheric state.</li>
+        <li><b>Attribute with explainable ML:</b> use SHAP values on the trained model to rank each driver's contribution to temperature — globally and locally per neighborhood.</li>
+        <li><b>Output driver maps:</b> "this block is hot mainly due to low vegetation + high impervious cover," giving planners a diagnosis, not just a symptom.</li>
+      </ul>
+      <div class="pills">
+        <span class="pill">LULC</span><span class="pill">Urban morphology</span><span class="pill">Vegetation</span><span class="pill">Albedo</span><span class="pill">SHAP attribution</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="model">
+    <span class="badge">Objective 3</span>
+    <h2>🧠 Model heat dynamics with physics-informed ML</h2>
+    <p class="lead">The core innovation: an ML model that learns the LST↔drivers relationship <em>and</em> obeys the physics of surface heat exchange, so it can predict the effect of changes it never saw in training.</p>
+
+    <h3>Base learner</h3>
+    <p style="color:var(--text-dim)">A gradient-boosted / neural regressor maps the driver feature stack to LST with high accuracy on observed data — the data-driven backbone.</p>
+
+    <h3>The physics constraint</h3>
+    <div class="callout cool">
+      We add a <b>surface energy-balance</b> term to the loss function. Net radiation must equal the sum of sensible heat, latent heat (evapotranspiration), and ground heat flux:
+      <br><br>
+      <b>R<sub>n</sub> = H + LE + G</b>
+      <br><br>
+      The model is penalized when its predictions violate this balance. Vegetation and water increase latent-heat (LE) cooling; high-albedo surfaces cut absorbed radiation. Because these levers are baked into the physics, the model's <em>counterfactual</em> predictions ("what if we add trees here?") stay physically credible.
+    </div>
+
+    <ul class="clean">
+      <li><b>Loss = data fit + λ · physics residual</b>, trained jointly (a PINN-style formulation).</li>
+      <li><b>Validation:</b> spatial hold-out (train on some districts, test on others) and temporal hold-out (train on one date, test another) to prove generalization, not memorization.</li>
+      <li><b>Metrics:</b> RMSE / MAE on LST plus a physics-consistency score.</li>
+    </ul>
+    <div class="pills">
+      <span class="pill hot">Physics-informed (PINN)</span><span class="pill">Energy balance</span><span class="pill">Gradient boosting / NN</span><span class="pill">Spatial CV</span>
+    </div>
+  </section>
+
+  <section id="optimize">
+    <span class="badge">Objective 4</span>
+    <h2>🌳 Generate & optimize cooling scenarios</h2>
+    <p class="lead">With a physically-grounded model, every intervention becomes a testable "what-if." We search for the best mix.</p>
+    <div class="panel">
+      <ul class="clean">
+        <li><b>Simulate:</b> edit the driver layers (raise vegetation, flip roofs to high-albedo, add a water body) and re-predict LST to get a °C reduction map.</li>
+        <li><b>Optimize under budget:</b> treat placement as a constrained optimization — maximize total heat-stress relief (weighted toward vulnerable populations) subject to an intervention budget/area.</li>
+        <li><b>Rank actions:</b> output a prioritized list — intervention type, exact location, and estimated °C drop.</li>
+      </ul>
+    </div>
+    <p><a href="scenarios.html">See the intervention catalog & optimization →</a></p>
+  </section>
+
+</main>
+
+<footer>
+  <b>CoolCity AI</b> · Optimizing urban heat mitigation via geospatial AI/ML<br>
+  Hackathon submission · <a href="https://github.com/Chirayu18/anshu">Source on GitHub</a>
+</footer>
+
+</body>
+</html>

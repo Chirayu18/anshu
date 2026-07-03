@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cooling Scenarios — CoolCity AI</title>
+<meta name="description" content="The catalog of cooling interventions CoolCity AI simulates and optimizes: urban greening, cool roofs, albedo changes, and water bodies.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span>CoolCity AI</span></a>
+    <div class="nav-links">
+      <a href="index.html">Overview</a>
+      <a href="approach.html">Approach</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="scenarios.html" class="active">Scenarios</a>
+      <a href="outcomes.html">Outcomes</a>
+    </div>
+    <a class="home-link" href="../index.html">↩ Anshu site</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">Interventions</div>
+  <h1>Cooling <span class="grad-cool">scenarios</span>, optimized</h1>
+  <p>Each intervention is a lever in the physics-informed model. We simulate them, quantify the °C relief, and search for the best placement under a budget.</p>
+</header>
+
+<main class="wrap">
+
+  <a class="backlink" href="index.html">← Back to overview</a>
+
+  <section>
+    <h2>The intervention catalog</h2>
+    <p class="lead">Four evidence-backed strategies, each tied to a physical mechanism the model understands.</p>
+    <div class="grid">
+      <div class="panel">
+        <h3>🌳 Urban greening</h3>
+        <p style="color:var(--text-dim)">Adds tree canopy / parks. <b>Mechanism:</b> shading + evapotranspiration (raises latent-heat cooling, LE). Strongest daytime effect; also improves air quality.</p>
+        <div class="pills"><span class="pill cool">↑ NDVI</span><span class="pill cool">↑ LE</span></div>
+      </div>
+      <div class="panel">
+        <h3>🏠 Cool / green roofs</h3>
+        <p style="color:var(--text-dim)">Reflective coatings or vegetated roofs on buildings. <b>Mechanism:</b> higher albedo + insulation reduces absorbed and re-radiated heat. High impact in dense built-up cores.</p>
+        <div class="pills"><span class="pill cool">↑ albedo</span><span class="pill cool">↓ R<sub>n</sub></span></div>
+      </div>
+      <div class="panel">
+        <h3>☀️ Albedo / pavement change</h3>
+        <p style="color:var(--text-dim)">Lighter road and surface materials. <b>Mechanism:</b> reflects more shortwave radiation instead of absorbing it. Cheap at scale for large paved zones.</p>
+        <div class="pills"><span class="pill cool">↑ albedo</span></div>
+      </div>
+      <div class="panel">
+        <h3>💧 Water bodies</h3>
+        <p style="color:var(--text-dim)">Ponds, fountains, restored wetlands. <b>Mechanism:</b> evaporative cooling + high thermal mass moderates local temperature, especially evenings.</p>
+        <div class="pills"><span class="pill cool">↑ evaporation</span><span class="pill cool">↑ thermal mass</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How optimization works</h2>
+    <div class="steps">
+      <div class="step"><div class="num"></div><div>
+        <h4>Define candidate sites</h4>
+        <p>Every hotspot pixel becomes a candidate for one or more feasible interventions (a roof can't become a lake).</p>
+      </div></div>
+      <div class="step"><div class="num"></div><div>
+        <h4>Simulate each counterfactual</h4>
+        <p>Edit the driver layers for a candidate, re-run the physics-informed model, and record the predicted °C reduction — locally and in the surrounding area.</p>
+      </div></div>
+      <div class="step"><div class="num"></div><div>
+        <h4>Weight by who it helps</h4>
+        <p>Multiply relief by population and vulnerability (from GHSL) so cooling is directed where human impact is greatest, not just where it's technically easiest.</p>
+      </div></div>
+      <div class="step"><div class="num"></div><div>
+        <h4>Optimize under budget</h4>
+        <p>A constrained optimizer (greedy / integer program) selects the intervention mix that maximizes total weighted relief within an area or cost budget.</p>
+      </div></div>
+      <div class="step"><div class="num"></div><div>
+        <h4>Output the plan</h4>
+        <p>A ranked, mapped list: intervention type → exact location → estimated °C drop → people benefited.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Illustrative results</h2>
+    <p class="lead">Representative figures the framework produces per intervention (values shown are typical literature ranges, to be replaced by the model's own estimates on the target city).</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Intervention</th><th>Best-fit zones</th><th>Est. local cooling</th><th>Relative cost</th></tr></thead>
+        <tbody>
+          <tr><td>Urban greening (canopy)</td><td>Low-vegetation residential</td><td><span class="up">1–3 °C</span></td><td>Medium</td></tr>
+          <tr><td>Cool roofs</td><td>Dense built-up cores</td><td><span class="up">1–2 °C</span></td><td>Low–Medium</td></tr>
+          <tr><td>High-albedo pavement</td><td>Large paved / industrial</td><td><span class="up">0.5–2 °C</span></td><td>Low</td></tr>
+          <tr><td>Water bodies</td><td>Open land near hotspots</td><td><span class="up">1–2 °C</span> (evening)</td><td>High</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout green">
+      <b>The deliverable isn't a single number</b> — it's a placeable, budget-aware plan. For a given district, CoolCity AI might recommend: <em>"Cool roofs on these 40 buildings (−1.6 °C) + a 2-ha pocket park here (−2.1 °C locally), together cooling ~12,000 residents' exposure."</em>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <b>CoolCity AI</b> · Optimizing urban heat mitigation via geospatial AI/ML<br>
+  Hackathon submission · <a href="https://github.com/Chirayu18/anshu">Source on GitHub</a>
+</footer>
+
+</body>
+</html>
