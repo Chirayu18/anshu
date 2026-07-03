@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FPGA & Hardware — Anshu's Career Guide</title>
+<meta name="description" content="A deep dive into FPGA and hardware engineering as a career pivot for mechanical engineers: what FPGAs are, why they matter, skills, and how to break in.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span>Anshu</span> · Career Guide</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="paths.html">Career Paths</a>
+      <a href="cryogenics.html">Cryogenics</a>
+      <a href="fpga.html" class="active">FPGA</a>
+      <a href="roadmap.html">Roadmap</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow" style="color:var(--fpga)">Deep dive · 🔲</div>
+  <h1><span class="grad">FPGA</span><br>hardware you build in software</h1>
+  <p>A <b>Field-Programmable Gate Array</b> is a chip whose digital logic you can reconfigure. For a mechanical engineer moving toward robotics, controls, or instrumentation, it's one of the highest-leverage skills you can add.</p>
+</header>
+
+<main class="wrap">
+
+  <a class="backlink" href="paths.html">← Back to career paths</a>
+
+  <section>
+    <h2>What an FPGA is</h2>
+    <p class="lead">A normal processor runs instructions one after another. An FPGA is different: it's a sea of logic blocks you wire together to <em>become</em> a custom digital circuit. You describe the hardware you want, and the FPGA physically reconfigures to be that hardware.</p>
+    <div class="panel">
+      <ul class="clean fpga">
+        <li><b>Parallel, not sequential:</b> thousands of operations happen literally at the same time, every clock cycle.</li>
+        <li><b>Deterministic timing:</b> responses in nanoseconds with no operating-system jitter — critical for control loops.</li>
+        <li><b>Reconfigurable:</b> update the "hardware" with a new bitstream, no new chip needed.</li>
+        <li><b>Described in HDL:</b> you write Verilog or VHDL — hardware description languages — to define the circuit.</li>
+      </ul>
+    </div>
+    <div class="callout fpga">
+      <b>The mental shift for an ME:</b> code you write isn't executed step-by-step — it <em>describes a machine</em>. It's closer to designing a mechanism than to writing a Python script, which is exactly why many mechanical/mechatronics engineers take to it well.
+    </div>
+  </section>
+
+  <section>
+    <h2>Why a mechanical engineer would care</h2>
+    <p class="lead">FPGAs show up precisely where mechanical systems get fast and demanding.</p>
+    <div class="grid">
+      <div class="panel">
+        <h3 style="color:var(--fpga)">⚙️ Real-time motor control</h3>
+        <p style="color:var(--text-dim)">High-speed motor drives, precision motion, and power electronics need control loops far faster than a microcontroller can guarantee. FPGAs deliver microsecond determinism.</p>
+      </div>
+      <div class="panel">
+        <h3 style="color:var(--fpga)">🤖 Robotics & sensor fusion</h3>
+        <p style="color:var(--text-dim)">Processing lidar, camera, and encoder data in parallel, in hardware, gives robots the reaction time software alone can't.</p>
+      </div>
+      <div class="panel">
+        <h3 style="color:var(--fpga)">🛰️ Aerospace & defense</h3>
+        <p style="color:var(--text-dim)">Radiation-tolerant, reconfigurable, high-reliability — FPGAs are everywhere in satellites, avionics, and radar.</p>
+      </div>
+      <div class="panel">
+        <h3 style="color:var(--fpga)">🔬 Instrumentation & test</h3>
+        <p style="color:var(--text-dim)">Data acquisition, signal processing, and hardware-in-the-loop test rigs — the tools MEs use to validate designs — run on FPGAs.</p>
+      </div>
+      <div class="panel">
+        <h3 style="color:var(--fpga)">❄️ Cryogenic control</h3>
+        <p style="color:var(--text-dim)">Quantum computers use FPGAs to generate and read qubit control pulses — a fascinating overlap with the <a href="cryogenics.html">cryogenics</a> path.</p>
+      </div>
+      <div class="panel">
+        <h3 style="color:var(--fpga)">⚡ Edge AI</h3>
+        <p style="color:var(--text-dim)">Running neural networks on-device with low latency and power — a fast-growing use of FPGAs in smart machines.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The learning path</h2>
+    <div class="steps">
+      <div class="step"><div class="num"></div><div>
+        <h4>Digital logic fundamentals</h4>
+        <p>Gates, flip-flops, combinational vs. sequential logic, clocking. The conceptual bedrock.</p>
+      </div></div>
+      <div class="step"><div class="num"></div><div>
+        <h4>Learn an HDL</h4>
+        <p>Pick <b>Verilog</b> (or VHDL). Write and simulate small modules — counters, state machines, UART.</p>
+      </div></div>
+      <div class="step"><div class="num"></div><div>
+        <h4>Get a dev board</h4>
+        <p>An affordable board like a Digilent Basys 3, Arty, or Tang Nano lets you run real designs on real silicon.</p>
+      </div></div>
+      <div class="step"><div class="num"></div><div>
+        <h4>Master the toolchain</h4>
+        <p>Vivado (AMD/Xilinx) or Quartus (Intel/Altera): synthesis, timing constraints, simulation, bitstream loading.</p>
+      </div></div>
+      <div class="step"><div class="num"></div><div>
+        <h4>Build a bridge project</h4>
+        <p>Combine your ME background: an FPGA-based motor controller, encoder reader, or sensor DAQ. This is your portfolio piece.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Skills & tools</h2>
+    <div class="pills">
+      <span class="pill">Verilog</span>
+      <span class="pill">VHDL</span>
+      <span class="pill">Digital logic</span>
+      <span class="pill">Vivado</span>
+      <span class="pill">Quartus</span>
+      <span class="pill">Timing constraints</span>
+      <span class="pill">Testbenches / simulation</span>
+      <span class="pill">DSP basics</span>
+      <span class="pill">SoC / embedded</span>
+      <span class="pill">Signal integrity</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Who's hiring</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Sector</th><th>Example employers</th><th>Typical role</th></tr></thead>
+        <tbody>
+          <tr><td>Robotics / automation</td><td>Boston Dynamics, ABB, KUKA, startups</td><td>Controls / FPGA engineer</td></tr>
+          <tr><td>Aerospace & defense</td><td>Lockheed, Raytheon, ISRO, DRDO</td><td>Digital / FPGA design engineer</td></tr>
+          <tr><td>Semiconductors</td><td>AMD (Xilinx), Intel (Altera), Lattice</td><td>FPGA application engineer</td></tr>
+          <tr><td>Instrumentation</td><td>National Instruments, Keysight</td><td>Hardware / test engineer</td></tr>
+          <tr><td>Quantum</td><td>Quantum Machines, Zurich Instruments</td><td>Control-hardware engineer</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout fpga">
+      <b>Reality check:</b> pivoting from ME to FPGA is very doable but takes deliberate study — it's a genuine second discipline. The MEs who succeed lean on their strength: applying FPGAs to physical systems (motors, sensors, mechatronics) rather than competing head-on with pure electrical engineers on chip internals.
+    </div>
+  </section>
+
+  <section>
+    <a class="card fpga" href="roadmap.html" style="max-width:520px">
+      <div class="ico">🗺️</div>
+      <h3>Ready to move on it?</h3>
+      <p>The roadmap page turns all of this into concrete next steps you can start this month.</p>
+      <span class="tag">See the roadmap →</span>
+    </a>
+  </section>
+
+</main>
+
+<footer>
+  Made for <b>Anshu</b> · A mechanical engineering career guide<br>
+  <a href="https://github.com/Chirayu18/anshu">Source on GitHub</a>
+</footer>
+
+</body>
+</html>

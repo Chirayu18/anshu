@@ -1,56 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anshu is the Best</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      text-align: center;
-      overflow: hidden;
-    }
-    .card {
-      padding: 2rem;
-      animation: fade 1.2s ease-out;
-    }
-    h1 {
-      font-size: clamp(2.5rem, 10vw, 6rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      text-shadow: 0 4px 30px rgba(0,0,0,0.25);
-    }
-    .name {
-      background: linear-gradient(90deg, #ffd86f, #fc6262);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    p {
-      margin-top: 1rem;
-      font-size: clamp(1rem, 3vw, 1.5rem);
-      opacity: 0.9;
-    }
-    .stars { margin-top: 1.5rem; font-size: clamp(1.5rem, 5vw, 2.5rem); }
-    @keyframes fade {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anshu's Career Guide — Mechanical Engineering</title>
+<meta name="description" content="A career guide for Anshu: mechanical engineering paths, with deep dives into cryogenics and FPGA / hardware engineering.">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="card">
-    <h1><span class="name">Anshu</span><br>is the Best</h1>
-    <p>Undeniably. Officially. Forever.</p>
-    <div class="stars">⭐⭐⭐⭐⭐</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span>Anshu</span> · Career Guide</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="paths.html">Career Paths</a>
+      <a href="cryogenics.html">Cryogenics</a>
+      <a href="fpga.html">FPGA</a>
+      <a href="roadmap.html">Roadmap</a>
+    </div>
   </div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">A career guide, built for Anshu</div>
+  <h1>Mechanical Engineering,<br><span class="grad">and the frontiers beyond it</span></h1>
+  <p>From core mechanical roles to the extreme cold of <b>cryogenics</b> and the reconfigurable logic of <b>FPGA hardware</b> — a map of where a mechanical engineering degree can actually take you.</p>
+  <div class="cta">
+    <a class="btn primary" href="paths.html">Explore the paths</a>
+    <a class="btn ghost" href="roadmap.html">See the roadmap</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section>
+    <h2>Pick a direction</h2>
+    <p class="lead">Mechanical engineering is one of the broadest disciplines there is — the same fundamentals branch into dozens of industries. Here are the tracks this guide covers.</p>
+    <div class="grid">
+      <a class="card" href="paths.html#design">
+        <div class="ico">📐</div>
+        <h3>Design & Product</h3>
+        <p>CAD, mechanisms, tolerancing, and turning ideas into manufacturable parts.</p>
+        <span class="tag">Explore →</span>
+      </a>
+      <a class="card" href="paths.html#thermal">
+        <div class="ico">🔥</div>
+        <h3>Thermal & Fluids</h3>
+        <p>Heat transfer, HVAC, turbomachinery, and energy systems.</p>
+        <span class="tag">Explore →</span>
+      </a>
+      <a class="card" href="paths.html#mechatronics">
+        <div class="ico">🤖</div>
+        <h3>Robotics & Mechatronics</h3>
+        <p>Where mechanical meets electronics, controls, and code.</p>
+        <span class="tag">Explore →</span>
+      </a>
+      <a class="card cryo" href="cryogenics.html">
+        <div class="ico">❄️</div>
+        <h3>Cryogenics</h3>
+        <p>Engineering at temperatures below −150 °C: rockets, quantum, medicine, fusion.</p>
+        <span class="tag">Deep dive →</span>
+      </a>
+      <a class="card fpga" href="fpga.html">
+        <div class="ico">🔲</div>
+        <h3>FPGA & Hardware</h3>
+        <p>Reconfigurable digital logic — a surprising, high-value pivot for MEs.</p>
+        <span class="tag">Deep dive →</span>
+      </a>
+      <a class="card" href="paths.html#manufacturing">
+        <div class="ico">🏭</div>
+        <h3>Manufacturing & Ops</h3>
+        <p>Process, automation, quality, and making things at scale.</p>
+        <span class="tag">Explore →</span>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Why these two specialties?</h2>
+    <p class="lead">Cryogenics and FPGA sit at opposite ends of the mechanical spectrum — one is deeply physical, the other deeply digital — yet both are where the most exciting, best-paid, and most future-proof engineering happens.</p>
+    <div class="grid">
+      <div class="panel">
+        <h3 style="color:var(--cryo)">❄️ Cryogenics</h3>
+        <p style="color:var(--text-dim)">Every rocket that reaches orbit, every MRI machine, and every quantum computer relies on cryogenic engineering. It's a domain where thermodynamics, materials science, and mechanical design collide — and where mechanical engineers lead.</p>
+      </div>
+      <div class="panel">
+        <h3 style="color:var(--fpga)">🔲 FPGA</h3>
+        <p style="color:var(--text-dim)">FPGAs let you build custom hardware in software. For an ME moving toward robotics, instrumentation, or aerospace controls, understanding FPGAs unlocks real-time systems that microcontrollers simply can't handle.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="callout">
+      <b>New here?</b> Start with the <a href="paths.html">Career Paths</a> overview to see how the branches connect, then jump into whichever deep dive pulls you in. When you're ready to act, the <a href="roadmap.html">Roadmap</a> lays out concrete next steps.
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Made for <b>Anshu</b> · A mechanical engineering career guide<br>
+  <a href="https://github.com/Chirayu18/anshu">Source on GitHub</a>
+</footer>
+
 </body>
 </html>
