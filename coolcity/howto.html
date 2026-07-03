@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Guide — CoolCity AI</title>
+<meta name="description" content="Step-by-step guide to building the physics-informed LST model with real satellite data: environment, data, features, physics loss, validation, and cooling scenarios.">
+<link rel="stylesheet" href="style.css">
+<style>
+  pre { background:#0c1118; border:1px solid var(--border); border-radius:12px; padding:1rem 1.1rem; overflow-x:auto; font-size:0.86rem; line-height:1.55; margin:1rem 0; }
+  code { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  pre code { color:#d7e2ee; }
+  p code, li code, td code { background:var(--bg-card); border:1px solid var(--border); border-radius:5px; padding:0.05rem 0.35rem; font-size:0.85em; color:var(--cool-2); }
+  .k { color:#ff8a3d; } .s { color:#7ee787; } .c { color:#6b7787; } .f { color:#35c4f0; }
+  .toc { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:1rem; }
+  .toc a { font-size:0.85rem; padding:0.35rem 0.7rem; border-radius:999px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-dim); }
+  .toc a:hover { text-decoration:none; border-color:var(--cool); color:var(--text); }
+  .stepnum { color:var(--accent); font-weight:800; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span>CoolCity AI</span></a>
+    <div class="nav-links">
+      <a href="index.html">Overview</a>
+      <a href="approach.html">Approach</a>
+      <a href="howto.html" class="active">Build Guide</a>
+      <a href="architecture.html">Architecture</a>
+      <a href="scenarios.html">Scenarios</a>
+      <a href="outcomes.html">Outcomes</a>
+    </div>
+    <a class="home-link" href="../index.html">↩ Anshu site</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">Implementation · step-by-step</div>
+  <h1>How to build the<br><span class="grad-hot">physics-informed</span> <span class="grad-cool">LST model</span></h1>
+  <p>A practical recipe using real satellite data — from a clean environment to a °C cooling map. Each step says <em>what to do</em>, <em>which tool</em>, and <em>what you get</em>.</p>
+  <div class="toc wrap" style="justify-content:center">
+    <a href="#s0">0 · Environment</a>
+    <a href="#s1">1 · Data access</a>
+    <a href="#s2">2 · Study area</a>
+    <a href="#s3">3 · Target (LST)</a>
+    <a href="#s4">4 · Features</a>
+    <a href="#s5">5 · Baseline</a>
+    <a href="#s6">6 · Physics</a>
+    <a href="#s7">7 · Validate</a>
+    <a href="#s8">8 · Scenarios</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <a class="backlink" href="approach.html">← Back to approach</a>
+
+  <section id="s0">
+    <h2><span class="stepnum">Step 0</span> · Environment (do this first)</h2>
+    <div class="callout"><b>Heads-up:</b> Python 3.14 is too new — PyTorch and rasterio don't ship wheels for it yet. Use <b>conda with Python 3.11</b>. Skip this and you hit install errors immediately.</div>
+    <pre><code><span class="c"># install miniforge (conda)</span>
+wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
+bash Miniforge3-Linux-x86_64.sh          <span class="c"># accept, restart shell</span>
+
+<span class="c"># create the project env</span>
+conda create -n coolcity python=3.11 -y
+conda activate coolcity
+
+<span class="c"># geospatial + ML stack</span>
+conda install -c conda-forge earthengine-api geemap rasterio geopandas rioxarray \
+    xarray numpy pandas scikit-learn matplotlib -y
+pip install torch xgboost shap</code></pre>
+    <p><b>You get:</b> a working environment where every import succeeds.</p>
+  </section>
+
+  <section id="s1">
+    <h2><span class="stepnum">Step 1</span> · Data access (Google Earth Engine)</h2>
+    <p class="lead">GEE is the shortcut: petabytes of Landsat / Sentinel / ERA5 queried in the cloud — no downloading terabytes.</p>
+    <div class="panel">
+      <ul class="clean">
+        <li>Sign up (free for research): <a href="https://earthengine.google.com/signup">earthengine.google.com/signup</a></li>
+        <li>Create a Google Cloud project and enable the Earth Engine API.</li>
+        <li>Authenticate in the terminal, then initialize in Python.</li>
+      </ul>
+    </div>
+    <pre><code>earthengine authenticate       <span class="c"># opens a browser, paste token back</span></code></pre>
+    <pre><code><span class="k">import</span> ee
+ee.<span class="f">Initialize</span>(project=<span class="s">"your-gcp-project-id"</span>)</code></pre>
+    <p><b>You get:</b> the ability to pull any dataset in the brief with a few lines of Python.</p>
+  </section>
+
+  <section id="s2">
+    <h2><span class="stepnum">Step 2</span> · Study area &amp; time window</h2>
+    <p class="lead">Pick ONE city and a cloud-free hot season — heat is the point.</p>
+    <pre><code>city = ee.Geometry.<span class="f">Rectangle</span>([<span class="s">77.5, 12.9, 77.7, 13.1</span>])   <span class="c"># bbox lon/lat</span>
+start, end = <span class="s">"2023-04-01"</span>, <span class="s">"2023-06-30"</span>              <span class="c"># hot pre-monsoon</span></code></pre>
+    <div class="callout cool"><b>Biggest time-saver:</b> small area + one season first. Get the whole pipeline working end-to-end on a tiny region before scaling up.</div>
+  </section>
+
+  <section id="s3">
+    <h2><span class="stepnum">Step 3</span> · Build the target — LST</h2>
+    <p class="lead">This is your <b>y</b> — what the model predicts.</p>
+    <div class="panel">
+      <ul class="clean">
+        <li><b>Landsat 8/9</b> Collection-2 L2 ships a surface-temp band <code>ST_B10</code>. Scale it: <code>K = ST_B10·0.00341802 + 149.0</code>, then <code>°C = K − 273.15</code>.</li>
+        <li>Mask clouds with the <code>QA_PIXEL</code> band; composite (median) into one clean image.</li>
+        <li>Optionally overlay <b>ECOSTRESS</b> LST for higher-res validation.</li>
+      </ul>
+    </div>
+    <pre><code><span class="k">def</span> <span class="f">scale_lst</span>(img):
+    lst = img.<span class="f">select</span>(<span class="s">"ST_B10"</span>).<span class="f">multiply</span>(<span class="s">0.00341802</span>).<span class="f">add</span>(<span class="s">149.0</span>).<span class="f">subtract</span>(<span class="s">273.15</span>)
+    <span class="k">return</span> lst.<span class="f">rename</span>(<span class="s">"LST"</span>)
+
+col = (ee.<span class="f">ImageCollection</span>(<span class="s">"LANDSAT/LC08/C02/T1_L2"</span>)
+       .<span class="f">filterBounds</span>(city).<span class="f">filterDate</span>(start, end)
+       .<span class="f">filter</span>(ee.Filter.<span class="f">lt</span>(<span class="s">"CLOUD_COVER"</span>, <span class="s">20</span>)))
+lst = col.<span class="f">map</span>(scale_lst).<span class="f">select</span>(<span class="s">"LST"</span>).<span class="f">median</span>().<span class="f">clip</span>(city)</code></pre>
+    <p><b>You get:</b> a clean LST raster in °C — your ground truth.</p>
+  </section>
+
+  <section id="s4">
+    <h2><span class="stepnum">Step 4</span> · Build the features — the drivers</h2>
+    <p class="lead">This is your <b>X</b>. Each factor is a raster aligned to the LST grid.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Factor</th><th>Source</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td>Vegetation (NDVI)</td><td>Landsat / Sentinel-2</td><td><code>(NIR−Red)/(NIR+Red)</code></td></tr>
+          <tr><td>Land cover</td><td>Dynamic World / WorldCover</td><td>categorical band</td></tr>
+          <tr><td>Albedo</td><td>Landsat reflectance</td><td>weighted band combo</td></tr>
+          <tr><td>Built-up density</td><td>GHSL</td><td>fraction built</td></tr>
+          <tr><td>Building height</td><td>UT-GLOBUS / GHSL</td><td>height band</td></tr>
+          <tr><td>Air temp / humidity / wind</td><td>ERA5-Land hourly</td><td>resample to grid</td></tr>
+          <tr><td>Impervious fraction</td><td>derived from LULC</td><td>% sealed surface</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:1rem">Stack them all, then <b>sample to a table</b> — one row per pixel:</p>
+    <pre><code>stack   = lst.<span class="f">addBands</span>([ndvi, albedo, builtup, era5_temp, era5_rh, era5_wind])
+samples = stack.<span class="f">sample</span>(region=city, scale=<span class="s">100</span>, numPixels=<span class="s">5000</span>, geometries=<span class="k">True</span>)
+<span class="c"># export to CSV or use geemap.ee_to_df -> pandas DataFrame</span></code></pre>
+    <div class="callout green"><b>This table IS "the relationship."</b> Columns = drivers + LST. Every ML step from here reads from it.</div>
+  </section>
+
+  <section id="s5">
+    <h2><span class="stepnum">Step 5</span> · Baseline model (before the physics)</h2>
+    <p class="lead">Always get a plain model working first, so you have something to beat — and it already completes brief Objectives 1 &amp; 2.</p>
+    <pre><code><span class="k">from</span> xgboost <span class="k">import</span> XGBRegressor
+
+model = <span class="f">XGBRegressor</span>(n_estimators=<span class="s">400</span>, max_depth=<span class="s">6</span>, learning_rate=<span class="s">0.05</span>)
+model.<span class="f">fit</span>(X_train, y_train)
+<span class="c"># report RMSE / MAE on a SPATIAL hold-out (train some tiles, test others)</span></code></pre>
+    <p>Then run <b>SHAP</b> to quantify each driver's contribution — that's the driver attribution deliverable:</p>
+    <pre><code><span class="k">import</span> shap
+explainer   = shap.<span class="f">TreeExplainer</span>(model)
+shap_values = explainer.<span class="f">shap_values</span>(X)   <span class="c"># global + per-pixel attribution</span></code></pre>
+    <p><b>You get:</b> a working LST predictor + a ranked, explainable list of what drives the heat.</p>
+  </section>
+
+  <section id="s6">
+    <h2><span class="stepnum">Step 6</span> · Add the physics (the core)</h2>
+    <p class="lead">Move to a small PyTorch net so you can add a physics penalty to the loss. The surface energy balance:</p>
+    <div class="callout cool"><b>R<sub>n</sub> = H + LE + G</b> — net radiation = sensible + <b>latent</b> + ground heat flux. The latent term (LE) is evaporative cooling: vegetation and water have high LE, which is <em>why</em> they cool. Penalize predictions that fight this.</div>
+    <pre><code><span class="k">import</span> torch, torch.nn <span class="k">as</span> nn
+
+<span class="k">class</span> <span class="f">LSTNet</span>(nn.Module):
+    <span class="k">def</span> <span class="f">__init__</span>(self, n):
+        <span class="f">super</span>().<span class="f">__init__</span>()
+        self.net = nn.<span class="f">Sequential</span>(nn.<span class="f">Linear</span>(n,<span class="s">64</span>), nn.<span class="f">ReLU</span>(),
+                                 nn.<span class="f">Linear</span>(<span class="s">64</span>,<span class="s">64</span>), nn.<span class="f">ReLU</span>(),
+                                 nn.<span class="f">Linear</span>(<span class="s">64</span>,<span class="s">1</span>))
+    <span class="k">def</span> <span class="f">forward</span>(self,x): <span class="k">return</span> self.<span class="f">net</span>(x).<span class="f">squeeze</span>(-<span class="s">1</span>)
+
+<span class="k">def</span> <span class="f">physics_residual</span>(x, lst_pred, cols):
+    <span class="c"># higher NDVI -> more LE cooling; higher albedo -> less absorbed Rn</span>
+    ndvi   = x[:, cols.<span class="f">index</span>(<span class="s">"NDVI"</span>)]
+    albedo = x[:, cols.<span class="f">index</span>(<span class="s">"albedo"</span>)]
+    expected = -(<span class="s">0.6</span>*ndvi + <span class="s">0.4</span>*albedo)                 <span class="c"># physics-expected cooling</span>
+    anom     = (lst_pred - lst_pred.<span class="f">mean</span>()) / (lst_pred.<span class="f">std</span>()+<span class="s">1e-6</span>)
+    <span class="k">return</span> ((anom - expected)**<span class="s">2</span>).<span class="f">mean</span>()
+
+model, opt, lam = <span class="f">LSTNet</span>(<span class="f">len</span>(cols)), torch.optim.<span class="f">Adam</span>(...), <span class="s">0.2</span>
+<span class="k">for</span> epoch <span class="k">in</span> <span class="f">range</span>(<span class="s">300</span>):
+    opt.<span class="f">zero_grad</span>()
+    pred = <span class="f">model</span>(X_t)
+    loss = ((pred - y_t)**<span class="s">2</span>).<span class="f">mean</span>() + lam*<span class="f">physics_residual</span>(X_t, pred, cols)
+    loss.<span class="f">backward</span>(); opt.<span class="f">step</span>()</code></pre>
+    <p><b>What this buys you:</b> the model can't learn "more trees → hotter" from noise. The physics term keeps the vegetation/albedo → cooling relationship sane — which is what makes Step 8's counterfactuals trustworthy.</p>
+    <div class="callout"><b>Rigor upgrade (if time):</b> replace the heuristic with real terms — R<sub>n</sub> from net radiation, LE from an evapotranspiration model driven by NDVI, G as a fraction of R<sub>n</sub> — and penalize <code>Rn − (H + LE + G)</code>. Same structure, more defensible to judges.</div>
+  </section>
+
+  <section id="s7">
+    <h2><span class="stepnum">Step 7</span> · Validate honestly</h2>
+    <div class="panel">
+      <ul class="clean">
+        <li><b>Spatial hold-out:</b> train on some tiles, test on unseen ones (<code>GroupKFold</code> on tiles).</li>
+        <li><b>Temporal hold-out:</b> train on one date, test another.</li>
+        <li>Report <b>RMSE / MAE</b> (accuracy) <em>and</em> a <b>physics-consistency</b> score.</li>
+        <li>Cross-check cooling estimates against <b>InVEST Urban Cooling</b> or <b>SOLWEIG</b>.</li>
+      </ul>
+    </div>
+    <p><b>You get:</b> evidence the model generalizes — the thing judges and planners actually care about.</p>
+  </section>
+
+  <section id="s8">
+    <h2><span class="stepnum">Step 8</span> · Simulate cooling scenarios (the payoff)</h2>
+    <p class="lead">This is why the physics mattered. To test "what if we green this area":</p>
+    <pre><code>X_scn = X_hotspots.<span class="f">copy</span>()
+X_scn[<span class="s">"NDVI"</span>]   += <span class="s">0.3</span>       <span class="c"># add tree canopy</span>
+X_scn[<span class="s">"albedo"</span>] += <span class="s">0.15</span>      <span class="c"># reflective / cool roofs</span>
+lst_after = <span class="f">model</span>(<span class="f">to_tensor</span>(X_scn))
+cooling   = lst_before - lst_after   <span class="c"># °C saved, per location</span></code></pre>
+    <p>Then rank/optimize placements under a budget (greedy or integer program), weighting by population (GHSL) → <b>intervention type + location + °C saved</b>. That's Objective 4.</p>
+  </section>
+
+  <section>
+    <h2>The critical path for a hackathon</h2>
+    <div class="steps">
+      <div class="step"><div class="num"></div><div><h4>Steps 0–4 · get the feature table</h4><p>One city, small area. Half the battle.</p></div></div>
+      <div class="step"><div class="num"></div><div><h4>Step 5 · XGBoost + SHAP</h4><p>Delivers Objectives 1 &amp; 2 already.</p></div></div>
+      <div class="step"><div class="num"></div><div><h4>Step 6 · minimal physics net</h4><p>The differentiator. Heuristic term is enough to demo.</p></div></div>
+      <div class="step"><div class="num"></div><div><h4>Step 8 · one scenario, one cooling map</h4><p>The wow demo.</p></div></div>
+      <div class="step"><div class="num"></div><div><h4>Then deepen</h4><p>Full validation &amp; optimization only if time remains.</p></div></div>
+    </div>
+    <div class="callout green"><b>Ship a thin end-to-end slice first, then deepen.</b> A working demo of the full loop beats a perfect model of one stage.</div>
+  </section>
+
+  <section>
+    <div class="cta" style="justify-content:flex-start">
+      <a class="btn primary" href="scenarios.html">See the scenarios</a>
+      <a class="btn ghost" href="approach.html">Back to approach</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <b>CoolCity AI</b> · Optimizing urban heat mitigation via geospatial AI/ML<br>
+  Hackathon submission · <a href="https://github.com/Chirayu18/anshu">Source on GitHub</a>
+</footer>
+
+</body>
+</html>
